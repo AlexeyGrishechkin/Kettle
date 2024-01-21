@@ -30,6 +30,7 @@
                 console.log(
                     `The kettle is turned on, amount of water: ${this.waterLevel}l`
                 );
+                return;
             }
 
             console.log(
@@ -58,7 +59,7 @@
                 return;
             }
             console.log('The kettle is turned on');
-            this.isOn = true;
+            this.isKettleOn = true;
             // show each sec water temperature
             this.timerId = setInterval(() => {
                 if (this.currentTemp < this.boilingTemp) {
@@ -74,7 +75,7 @@
 
         turnOff() {
             clearInterval(this.timerId);
-            this.isOn = false;
+            this.isKettleOn = false;
             console.log(
                 `The kettle is turned off. Water temperature: ${this.currentTemp} degrees`
             );
