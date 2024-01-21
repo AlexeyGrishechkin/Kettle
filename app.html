@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React App</title>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+    const {useRef} = React;
+
+    class Kettle {
+        constructor() {
+            this.isKettleOn = false;
+            this.waterLevel = 0;
+            this.maxWaterLevel = 1;
+            this.boilingTemp = 100;
+            this.currentTemp = 0;
+            this.timerId = null;
+        }
+
+        get status() {
+            if (this.isKettleOn) {
+                console.log(
+                    `The kettle is turned on, amount of water: ${this.waterLevel}l`
+                );
+            }
+
+            console.log(
+                `The kettle is turned off, amount of water: ${this.waterLevel}l`
+            );
+        }
+
+        setWaterLevel(amount) {
+            if (amount <= this.maxWaterLevel) {
+                this.waterLevel = amount;
+                console.log(`Added ${amount} liters of water`);
+                return;
+            }
+            console.log('Incorrect water amount. Max 1l');
+        }
+
+        clearWaterLevel() {
+            this.waterLevel = 0;
+            console.log('No water in kettle');
+        }
+
+        turnOn() {
+            // check water level before start boil
+            if (this.waterLevel === 0) {
+                console.log('No water, kettle cannot be turned on');
+                return;
+            }
+            console.log('The kettle is turned on');
+            this.isOn = true;
+            // show each sec water temperature
+            this.timerId = setInterval(() => {
+                if (this.currentTemp < this.boilingTemp) {
+                    this.currentTemp += 10;
+                    console.log(`Water temperature: ${this.currentTemp} deg`);
+                } else {
+                    clearInterval(this.timerId);
+                    console.log('The water has boiled!');
+                    this.isOn = false;
+                }
+            }, 1000);
+        }
+
+        turnOff() {
+            clearInterval(this.timerId);
+            this.isOn = false;
+            console.log(
+                `The kettle is turned off. Water temperature: ${this.currentTemp} degrees`
+            );
+        }
+    }
+
+    function App() {
+        const vitekKettle = new Kettle();
+        const myRef = useRef(null);
+
+        // list of buttons with methods
+        const buttonMethods = [
+            {hasInput: false, method: () => vitekKettle.status, label: 'Show status'},
+            {
+                hasInput: true,
+                method: () => {
+                    vitekKettle.setWaterLevel(myRef.current.value);
+                    myRef.current.value = null;
+                },
+                label: 'Add water',
+            },
+            {
+                hasInput: false,
+                method: () => vitekKettle.clearWaterLevel(),
+                label: 'Clear water level',
+            },
+            {hasInput: false, method: () => vitekKettle.turnOn(), label: 'Turn on'},
+            {hasInput: false, method: () => vitekKettle.turnOff(), label: 'Turn off'},
+        ];
+
+        return (
+            <div className='App'>
+                <h1>Vitek VT-1155 kettle</h1>
+                <h3>Please open console before press the button</h3>
+                {buttonMethods.map(({hasInput, method, label}) => {
+                    return (
+                        <span key={label} style={{paddingRight: '5px'}}>
+                            {hasInput && <input ref={myRef}/>}
+                            <button onClick={() => method()}>{label}</button>
+                        </span>
+                    );
+                })}
+            </div>
+        );
+    }
+
+
+    ReactDOM.render(<App/>, document.getElementById('root'));
+</script>
+</body>
+</html>
