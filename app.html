@@ -112,7 +112,7 @@
                 {buttonMethods.map(({hasInput, method, label}) => {
                     return (
                         <span key={label} style={{paddingRight: '5px'}}>
-                            {hasInput && <input ref={myRef}/>}
+                            {hasInput && <input type='number' ref={myRef}/>}
                             <button onClick={() => method()}>{label}</button>
                         </span>
                     );
